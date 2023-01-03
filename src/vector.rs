@@ -1,4 +1,5 @@
 use std::ops;
+#[derive(Clone)]
 pub struct Vec3 {
     x: f32,
     y: f32,
@@ -96,9 +97,9 @@ impl ops::Add<&Vec3> for &Vec3 {
         };
     }
 }
-impl ops::Sub<Vec3> for &Vec3 {
+impl ops::Sub<&Vec3> for &Vec3 {
     type Output = Vec3;
-    fn sub(self, rhs: Vec3) -> Self::Output {
+    fn sub(self, rhs: &Vec3) -> Self::Output {
         return Vec3 {
             x: self.x - rhs.x,
             y: self.y - rhs.y,

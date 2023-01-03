@@ -18,9 +18,9 @@ macro_rules! write_color {
         const COLOR_VALUE: f32 = 255.999;
         println!(
             "{} {} {}",
-            $a[0] * COLOR_VALUE,
-            $a[1] * COLOR_VALUE,
-            $a[2] * COLOR_VALUE
+            ($a[0] * COLOR_VALUE) as u32,
+            ($a[1] * COLOR_VALUE) as u32,
+            ($a[2] * COLOR_VALUE) as u32,
         )
     };
 }

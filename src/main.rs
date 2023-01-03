@@ -15,7 +15,7 @@ fn main() {
         io::stderr().flush().unwrap();
         for i in 0..IMAGE_WIDTH {
             let pixel_color = raytracer::Vec3::new(
-                (i as f32 / (IMAGE_WIDTH - 1) as f32),
+                i as f32 / (IMAGE_WIDTH - 1) as f32,
                 (j / IMAGE_HEIGHT) as f32,
                 0.25,
             );

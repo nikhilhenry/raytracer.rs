@@ -1,12 +1,13 @@
 mod ray;
+mod vector;
 use std::io;
 use std::io::Write;
-mod vector;
+use vector::Vec3;
 
-fn ray_color(r: ray::Ray) -> vector::Vec3 {
+fn ray_color(r: ray::Ray) -> Vec3 {
     let unit_direction = vector::unit_vector(r.dir());
     let t = 0.5 * (unit_direction[1] + 1.0);
-    vector::Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + vector::Vec3::new(0.5, 0.7, 1.0) * t
+    Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + vector::Vec3::new(0.5, 0.7, 1.0) * t
 }
 
 pub fn render() {
@@ -20,13 +21,13 @@ pub fn render() {
     let viewport_width = ASPECT_RATIO * viewport_height;
     let focal_length = 1.0;
 
-    let origin = vector::Vec3::new(0.0, 0.0, 0.0);
-    let horizontal = vector::Vec3::new(viewport_width, 0.0, 0.0);
-    let vertical = vector::Vec3::new(0.0, viewport_height, 0.0);
+    let origin = Vec3::new(0.0, 0.0, 0.0);
+    let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
+    let vertical = Vec3::new(0.0, viewport_height, 0.0);
     let lower_left_corner = origin.clone()
         - horizontal.clone() / 2.0
         - vertical.clone() / 2.0
-        - vector::Vec3::new(0.0, 0.0, focal_length);
+        - Vec3::new(0.0, 0.0, focal_length);
 
     // Renderer
     print!("P3\n{IMAGE_WIDTH} {IMAGE_HEIGHT}\n255\n");

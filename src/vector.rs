@@ -87,9 +87,9 @@ impl ops::Index<u8> for Vec3 {
     }
 }
 
-impl ops::Add<&Vec3> for &Vec3 {
+impl ops::Add<Vec3> for Vec3 {
     type Output = Vec3;
-    fn add(self, rhs: &Vec3) -> Self::Output {
+    fn add(self, rhs: Vec3) -> Self::Output {
         return Vec3 {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
@@ -97,9 +97,9 @@ impl ops::Add<&Vec3> for &Vec3 {
         };
     }
 }
-impl ops::Sub<&Vec3> for &Vec3 {
+impl ops::Sub<Vec3> for Vec3 {
     type Output = Vec3;
-    fn sub(self, rhs: &Vec3) -> Self::Output {
+    fn sub(self, rhs: Vec3) -> Self::Output {
         return Vec3 {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
@@ -107,13 +107,23 @@ impl ops::Sub<&Vec3> for &Vec3 {
         };
     }
 }
-impl ops::Mul<Vec3> for &Vec3 {
+impl ops::Mul<Vec3> for Vec3 {
     type Output = Vec3;
     fn mul(self, rhs: Vec3) -> Self::Output {
         return Vec3 {
             x: self.x * rhs.x,
             y: self.y * rhs.y,
             z: self.z * rhs.z,
+        };
+    }
+}
+impl ops::Mul<f32> for Vec3 {
+    type Output = Vec3;
+    fn mul(self, rhs: f32) -> Self::Output {
+        return Vec3 {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
         };
     }
 }
@@ -128,6 +138,12 @@ impl ops::Mul<f32> for &Vec3 {
     }
 }
 impl ops::Div<f32> for &Vec3 {
+    type Output = Vec3;
+    fn div(self, rhs: f32) -> Self::Output {
+        self * (1.0 / rhs)
+    }
+}
+impl ops::Div<f32> for Vec3 {
     type Output = Vec3;
     fn div(self, rhs: f32) -> Self::Output {
         self * (1.0 / rhs)

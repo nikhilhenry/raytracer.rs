@@ -19,6 +19,6 @@ impl Ray {
         &self.dir
     }
     pub fn at(&self, t: f32) -> Vec3 {
-        &self.origin + &(&self.dir * t)
+        &self.origin * t
     }
 }

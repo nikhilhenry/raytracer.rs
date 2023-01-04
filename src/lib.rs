@@ -6,7 +6,7 @@ use vector::Vec3;
 
 fn ray_color(r: ray::Ray) -> Vec3 {
     let unit_direction = vector::unit_vector(r.dir());
-    let t = 0.5 * (unit_direction[1] + 1.0);
+    let t = 0.5 * (unit_direction['y'] + 1.0);
     Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + vector::Vec3::new(0.5, 0.7, 1.0) * t
 }
 

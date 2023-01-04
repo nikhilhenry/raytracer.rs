@@ -19,9 +19,9 @@ macro_rules! write_color {
         const COLOR_VALUE: f32 = 255.999;
         println!(
             "{} {} {}",
-            ($a[0] * COLOR_VALUE) as u32,
-            ($a[1] * COLOR_VALUE) as u32,
-            ($a[2] * COLOR_VALUE) as u32,
+            ($a['x'] * COLOR_VALUE) as u32,
+            ($a['y'] * COLOR_VALUE) as u32,
+            ($a['z'] * COLOR_VALUE) as u32,
         )
     };
 }
@@ -74,14 +74,14 @@ impl ops::DivAssign<f32> for Vec3 {
     }
 }
 
-impl ops::Index<u8> for Vec3 {
+impl ops::Index<char> for Vec3 {
     type Output = f32;
 
-    fn index(&self, index: u8) -> &Self::Output {
+    fn index(&self, index: char) -> &Self::Output {
         match index {
-            0 => &self.x,
-            1 => &self.y,
-            2 => &self.z,
+            'x' => &self.x,
+            'y' => &self.y,
+            'z' => &self.z,
             _ => panic!("Incorrect vec index"),
         }
     }

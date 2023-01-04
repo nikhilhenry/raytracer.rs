@@ -6,14 +6,14 @@ use vector::Vec3;
 
 fn hit_sphere(center: &Vec3, radius: f32, r: &ray::Ray) -> f32 {
     let oc = r.origin() - center;
-    let a = vector::dot(r.dir(), r.dir());
-    let b = 2.0 * vector::dot(&oc, r.dir());
-    let c = vector::dot(&oc, &oc) - radius * radius;
-    let discriminat = b * b - 4.0 * a * c;
+    let a = r.dir().length_squared();
+    let half_b = vector::dot(&oc, r.dir());
+    let c = oc.length_squared() - radius * radius;
+    let discriminat = half_b * half_b - a * c;
     if discriminat < 0.0 {
         return -1.0;
     } else {
-        return (-b - discriminat.sqrt()) / (2.0 * a);
+        return (-half_b - discriminat.sqrt()) / (2.0 * a);
     }
 }
 

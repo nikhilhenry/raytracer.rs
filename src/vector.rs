@@ -38,10 +38,10 @@ impl Vec3 {
         }
     }
 
-    fn length(&self) -> f32 {
+    pub fn length(&self) -> f32 {
         self.length_squared().sqrt()
     }
-    fn length_squared(&self) -> f32 {
+    pub fn length_squared(&self) -> f32 {
         self.x.powf(2.0) + self.y.powf(2.0) + self.z.powf(2.0)
     }
 }

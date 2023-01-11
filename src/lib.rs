@@ -1,31 +1,27 @@
+mod hittable;
+use std::rc;
 mod ray;
+mod sphere;
 mod vector;
+use sphere::Sphere;
 use std::io;
 use std::io::Write;
 use vector::Vec3;
 
-fn hit_sphere(center: &Vec3, radius: f32, r: &ray::Ray) -> f32 {
-    let oc = r.origin() - center;
-    let a = r.dir().length_squared();
-    let half_b = vector::dot(&oc, r.dir());
-    let c = oc.length_squared() - radius * radius;
-    let discriminat = half_b * half_b - a * c;
-    if discriminat < 0.0 {
-        return -1.0;
-    } else {
-        return (-half_b - discriminat.sqrt()) / (2.0 * a);
-    }
-}
-
-fn ray_color(r: &ray::Ray) -> Vec3 {
-    let t = hit_sphere(&Vec3::new(0.0, 0.0, -1.0), 0.5, r);
-    if t > 0.0 {
-        let n = vector::unit_vector(&(r.at(t) - Vec3::new(0.0, 0.0, -1.0)));
-        return Vec3::new(n['x'] + 1.0, n['y'] + 1.0, n['z'] + 1.0) * 0.5;
+fn ray_color(r: &ray::Ray, world: &dyn hittable::Hittable) -> Vec3 {
+    if let Some(hit) = world.hit(r, 0.0, INFINITY) {
+        return (hit.normal + Vec3::new(1.0, 1.0, 1.0)) * 0.5;
     }
     let unit_direction = vector::unit_vector(r.dir());
     let t = 0.5 * (unit_direction['y'] + 1.0);
     return Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + vector::Vec3::new(0.5, 0.7, 1.0) * t;
+}
+
+const INFINITY: f32 = f32::INFINITY;
+const PI: f32 = std::f32::consts::PI;
+
+pub fn deg_to_rad(degress: f32) -> f32 {
+    degress / PI
 }
 
 pub fn render() {
@@ -33,6 +29,14 @@ pub fn render() {
     const ASPECT_RATIO: f32 = 16.0 / 9.0;
     const IMAGE_WIDTH: u32 = 400;
     const IMAGE_HEIGHT: i32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as i32;
+
+    // World
+    let mut world = hittable::HittableList::new();
+    world.add(rc::Rc::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)));
+    world.add(rc::Rc::new(Sphere::new(
+        Vec3::new(0.0, -100.5, -1.0),
+        100.0,
+    )));
 
     // Camera
     let viewport_height = 2.0;
@@ -59,7 +63,7 @@ pub fn render() {
             let dir = lower_left_corner.clone() + horizontal.clone() * u + vertical.clone() * v
                 - origin.clone();
             let r = ray::Ray::new(&origin, &dir);
-            let pixel_color = ray_color(&r);
+            let pixel_color = ray_color(&r, &world);
             write_color!(pixel_color);
         }
         j -= 1;

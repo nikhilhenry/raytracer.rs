@@ -13,17 +13,23 @@ macro_rules! print_vec {
     };
 }
 
-#[macro_export]
-macro_rules! write_color {
-    ($a:expr) => {
-        const COLOR_VALUE: f32 = 255.999;
-        println!(
-            "{} {} {}",
-            ($a['x'] * COLOR_VALUE) as u32,
-            ($a['y'] * COLOR_VALUE) as u32,
-            ($a['z'] * COLOR_VALUE) as u32,
-        )
+fn clamp(x: f32, min: f32, max: f32) -> f32 {
+    if x > max {
+        return max;
     };
+    if x < min {
+        return min;
+    }
+    return x;
+}
+
+pub fn write_color(color: Vec3, sample_per_pixel: u32) {
+    let scale = 1.0 / sample_per_pixel as f32;
+    let r = (256.0 * clamp(color.x * scale, 0.0, 0.999)) as u32;
+    let g = (256.0 * clamp(color.y * scale, 0.0, 0.999)) as u32;
+    let b = (256.0 * clamp(color.z * scale, 0.0, 0.999)) as u32;
+
+    println!("{} {} {}", r, g, b)
 }
 
 impl Vec3 {

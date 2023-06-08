@@ -6,14 +6,19 @@ mod sphere;
 mod vector;
 use camera::Camera;
 use rand::Rng;
+use ray::Ray;
 use sphere::Sphere;
 use std::io;
 use std::io::Write;
-use vector::Vec3;
+use vector::{random_in_unit_sphere, Vec3};
 
-fn ray_color(r: &ray::Ray, world: &dyn hittable::Hittable) -> Vec3 {
+fn ray_color(r: &ray::Ray, world: &dyn hittable::Hittable, depth: u32) -> Vec3 {
+    if depth == 0 {
+        return Vec3::new(0.0, 0.0, 0.0);
+    }
     if let Some(hit) = world.hit(r, 0.0, INFINITY) {
-        return (hit.normal + Vec3::new(1.0, 1.0, 1.0)) * 0.5;
+        let target = &hit.p + &hit.normal + random_in_unit_sphere();
+        return ray_color(&Ray::new(&hit.p, &(&target - &hit.p)), world, depth - 1) * 0.5;
     }
     let unit_direction = vector::unit_vector(r.dir());
     let t = 0.5 * (unit_direction['y'] + 1.0);
@@ -33,6 +38,7 @@ pub fn render() {
     const IMAGE_WIDTH: u32 = 400;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as u32;
     const SAMPLES_PER_PIXEL: u32 = 100;
+    const MAX_DEPTH: u32 = 50;
 
     // World
     let mut world = hittable::HittableList::new();
@@ -43,7 +49,7 @@ pub fn render() {
     )));
 
     // Camera
-    let camera = Camera::new();
+    let cam = Camera::new();
     // Renderer
     print!("P3\n{IMAGE_WIDTH} {IMAGE_HEIGHT}\n255\n");
     let mut j = (IMAGE_HEIGHT - 1) as i32;
@@ -57,8 +63,8 @@ pub fn render() {
                 let u = (i as f32 + rng.gen_range(0.0..1.0)) / (IMAGE_WIDTH - 1) as f32;
                 let v = (j as f32 + rng.gen_range(0.0..1.0)) / (IMAGE_HEIGHT - 1) as f32;
 
-                let r = camera.get_ray(u, v);
-                pixel_color += ray_color(&r, &world);
+                let r = cam.get_ray(u, v);
+                pixel_color += ray_color(&r, &world, MAX_DEPTH);
             }
             vector::write_color(pixel_color, SAMPLES_PER_PIXEL);
         }

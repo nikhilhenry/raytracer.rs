@@ -1,4 +1,6 @@
+use rand::Rng;
 use std::ops;
+
 #[derive(Clone)]
 pub struct Vec3 {
     x: f32,
@@ -32,6 +34,14 @@ pub fn write_color(color: Vec3, sample_per_pixel: u32) {
     println!("{} {} {}", r, g, b)
 }
 
+pub fn random_in_unit_sphere() -> Vec3 {
+    let mut p = Vec3::random_bound(-1.0, 1.0);
+    while p.length_squared() >= 1.0 {
+        p = Vec3::random_bound(-1.0, 1.0);
+    }
+    return p;
+}
+
 impl Vec3 {
     pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
         Vec3 { x, y, z }
@@ -44,6 +54,23 @@ impl Vec3 {
         }
     }
 
+    pub fn random() -> Vec3 {
+        let mut rng = rand::thread_rng();
+        Vec3 {
+            x: rng.gen(),
+            y: rng.gen(),
+            z: rng.gen(),
+        }
+    }
+
+    pub fn random_bound(min: f32, max: f32) -> Vec3 {
+        let mut rng = rand::thread_rng();
+        Vec3 {
+            x: rng.gen_range(min..max),
+            y: rng.gen_range(min..max),
+            z: rng.gen_range(min..max),
+        }
+    }
     pub fn length(&self) -> f32 {
         self.length_squared().sqrt()
     }
@@ -104,6 +131,16 @@ impl ops::Add<Vec3> for Vec3 {
     }
 }
 impl ops::Add<&Vec3> for Vec3 {
+    type Output = Vec3;
+    fn add(self, rhs: &Vec3) -> Self::Output {
+        return Vec3 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        };
+    }
+}
+impl ops::Add<&Vec3> for &Vec3 {
     type Output = Vec3;
     fn add(self, rhs: &Vec3) -> Self::Output {
         return Vec3 {

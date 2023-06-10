@@ -10,14 +10,15 @@ use ray::Ray;
 use sphere::Sphere;
 use std::io;
 use std::io::Write;
-use vector::{random_unit_vector, Vec3};
+use vector::{random_in_hemisphere, random_unit_vector, Vec3};
 
 fn ray_color(r: &ray::Ray, world: &dyn hittable::Hittable, depth: u32) -> Vec3 {
     if depth == 0 {
         return Vec3::new(0.0, 0.0, 0.0);
     }
     if let Some(hit) = world.hit(r, 0.001, INFINITY) {
-        let target = &hit.p + &hit.normal + random_unit_vector();
+        // let target = &hit.p + &hit.normal + random_unit_vector();
+        let target = &hit.p + &hit.normal + random_in_hemisphere(&hit.normal);
         return ray_color(&Ray::new(&hit.p, &(&target - &hit.p)), world, depth - 1) * 0.5;
     }
     let unit_direction = vector::unit_vector(r.dir());

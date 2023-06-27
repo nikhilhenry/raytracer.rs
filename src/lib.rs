@@ -1,4 +1,5 @@
 mod hittable;
+mod material;
 use std::rc;
 mod camera;
 mod ray;
@@ -6,11 +7,10 @@ mod sphere;
 mod vector;
 use camera::Camera;
 use rand::Rng;
-use ray::Ray;
 use sphere::Sphere;
 use std::io;
 use std::io::Write;
-use vector::{random_in_hemisphere, random_unit_vector, Vec3};
+use vector::Vec3;
 
 fn ray_color(r: &ray::Ray, world: &dyn hittable::Hittable, depth: u32) -> Vec3 {
     if depth == 0 {
@@ -18,8 +18,13 @@ fn ray_color(r: &ray::Ray, world: &dyn hittable::Hittable, depth: u32) -> Vec3 {
     }
     if let Some(hit) = world.hit(r, 0.001, INFINITY) {
         // let target = &hit.p + &hit.normal + random_unit_vector();
-        let target = &hit.p + &hit.normal + random_in_hemisphere(&hit.normal);
-        return ray_color(&Ray::new(&hit.p, &(&target - &hit.p)), world, depth - 1) * 0.5;
+        // let target = &hit.p + &hit.normal + random_in_hemisphere(&hit.normal);
+        // return ray_color(&Ray::new(&hit.p, &(&target - &hit.p)), world, depth - 1) * 0.5;
+        if let Some((attenuation, scattered)) = hit.material.scatter(r, &hit) {
+            return attenuation * ray_color(&scattered, world, depth - 1);
+        } else {
+            return Vec3::zero();
+        }
     }
     let unit_direction = vector::unit_vector(r.dir());
     let t = 0.5 * (unit_direction['y'] + 1.0);
@@ -40,6 +45,8 @@ pub fn render() {
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as u32;
     const SAMPLES_PER_PIXEL: u32 = 100;
     const MAX_DEPTH: u32 = 50;
+
+    // Spheres and Materials
 
     // World
     let mut world = hittable::HittableList::new();

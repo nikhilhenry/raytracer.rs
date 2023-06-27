@@ -56,6 +56,10 @@ pub fn random_in_hemisphere(normal: &Vec3) -> Vec3 {
     return in_unit_sphere * -1.0;
 }
 
+pub fn reflect(v: &Vec3, n: &Vec3) -> Vec3 {
+    v - &(n * 2.0 * dot(v, n))
+}
+
 impl Vec3 {
     pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
         Vec3 { x, y, z }
@@ -66,6 +70,11 @@ impl Vec3 {
             y: 0.0,
             z: 0.0,
         }
+    }
+
+    pub fn near_zero(&self) -> bool {
+        let s = 1e-18;
+        (self.x.abs() < s) && (self.y.abs() < s) && (self.z.abs() < s)
     }
 
     pub fn random() -> Vec3 {

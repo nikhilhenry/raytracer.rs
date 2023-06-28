@@ -47,13 +47,24 @@ pub fn render() {
     const MAX_DEPTH: u32 = 50;
 
     // Spheres and Materials
+    let material_ground = rc::Rc::new(material::Lambertian {
+        albedo: Vec3::new(0.8, 0.8, 0.0),
+    });
 
+    let material_center = rc::Rc::new(material::Lambertian {
+        albedo: Vec3::new(0.7, 0.3, 0.0),
+    });
     // World
     let mut world = hittable::HittableList::new();
-    world.add(rc::Rc::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)));
+    world.add(rc::Rc::new(Sphere::new(
+        Vec3::new(0.0, 0.0, -1.0),
+        0.5,
+        material_center,
+    )));
     world.add(rc::Rc::new(Sphere::new(
         Vec3::new(0.0, -100.5, -1.0),
         100.0,
+        material_ground,
     )));
 
     // Camera

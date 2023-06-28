@@ -11,30 +11,30 @@ pub trait Material {
 }
 
 pub struct Lambertian {
-    albedo: Vec3,
+    pub albedo: Vec3,
 }
 
 impl Material for Lambertian {
     fn scatter(&self, r_in: &Ray, hit: &HitRecord) -> Scatter {
-        let mut scatter_dir = hit.normal + random_unit_vector();
+        let mut scatter_dir = &hit.normal + &random_unit_vector();
         if scatter_dir.near_zero() {
-            scatter_dir = hit.normal;
+            scatter_dir = hit.normal.clone()
         }
         let scattered = Ray::new(&hit.p, &scatter_dir);
-        let attenuation = self.albedo;
+        let attenuation = self.albedo.clone();
         return Some((attenuation, scattered));
     }
 }
 
 pub struct Metal {
-    albedo: Vec3,
+    pub albedo: Vec3,
 }
 
 impl Material for Metal {
     fn scatter(&self, r_in: &Ray, hit: &HitRecord) -> Scatter {
         let reflected = reflect(&unit_vector(r_in.dir()), &hit.normal);
         let scattered = Ray::new(&hit.p, &reflected);
-        let attenuation = self.albedo;
+        let attenuation = self.albedo.clone();
         if dot(scattered.dir(), &hit.normal) > 0.0 {
             return Some((attenuation, scattered));
         } else {

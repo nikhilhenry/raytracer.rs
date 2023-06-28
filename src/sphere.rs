@@ -43,7 +43,7 @@ impl Hittable for Sphere {
                     p,
                     normal: if front_face { normal } else { normal * -1.0 },
                     front_face,
-                    material: self.mat,
+                    material: self.mat.clone(),
                 });
             }
         }

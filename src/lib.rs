@@ -87,11 +87,10 @@ pub fn render() {
     let cam = Camera::new();
     // Renderer
     print!("P3\n{IMAGE_WIDTH} {IMAGE_HEIGHT}\n255\n");
-    let j = IMAGE_HEIGHT - 1;
+    let mut j = (IMAGE_HEIGHT - 1) as i32;
     let mut rng = rand::thread_rng();
-    for iter in 1..=j {
-        let remaining = j - iter;
-        eprint!("\r Scanlines remaining: {remaining}");
+    while j >= 0 {
+        eprint!("\r Scanlines remaining: {j}");
         io::stderr().flush().unwrap();
         for i in 0..IMAGE_WIDTH {
             let mut pixel_color = Vec3::zero();
@@ -104,5 +103,6 @@ pub fn render() {
             }
             vector::write_color(pixel_color, SAMPLES_PER_PIXEL);
         }
+        j -= 1;
     }
 }

@@ -58,10 +58,6 @@ impl Material for Dielectric {
         let unit_direction = unit_vector(r_in.dir());
         let refracted = refract(&unit_direction, &hit.normal, refraction_ratio);
         let scattered = Ray::new(&hit.p, &refracted);
-        if dot(scattered.dir(), &hit.normal) > 0.0 {
-            return Some((attenuation, scattered));
-        } else {
-            return None;
-        }
+        return Some((attenuation, scattered));
     }
 }

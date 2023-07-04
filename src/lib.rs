@@ -51,12 +51,14 @@ pub fn render() {
         albedo: Vec3::new(0.8, 0.8, 0.0),
     });
 
-    let material_center = rc::Rc::new(material::Lambertian {
-        albedo: Vec3::new(0.7, 0.3, 0.0),
-    });
-    let material_left = rc::Rc::new(material::Metal {
-        albedo: Vec3::new(0.8, 0.8, 0.8),
-    });
+    // let material_center = rc::Rc::new(material::Lambertian {
+    //     albedo: Vec3::new(0.7, 0.3, 0.0),
+    // });
+    let material_center = rc::Rc::new(material::Dielectric { ir: 1.5 });
+    // let material_left = rc::Rc::new(material::Metal {
+    //     albedo: Vec3::new(0.8, 0.8, 0.8),
+    // });
+    let material_left = rc::Rc::new(material::Dielectric { ir: 1.5 });
     let material_right = rc::Rc::new(material::Metal {
         albedo: Vec3::new(0.8, 0.6, 0.2),
     });

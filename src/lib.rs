@@ -34,8 +34,9 @@ fn ray_color(r: &ray::Ray, world: &dyn hittable::Hittable, depth: u32) -> Vec3 {
 const INFINITY: f32 = f32::INFINITY;
 const PI: f32 = std::f32::consts::PI;
 
+#[inline]
 pub fn deg_to_rad(degress: f32) -> f32 {
-    degress / PI
+    degress * PI / 180.0
 }
 
 pub fn render() {
@@ -83,7 +84,22 @@ pub fn render() {
         material_right,
     )));
     // Camera
-    let cam = Camera::new();
+    let lookfrom = Vec3::new(-2.0, 2.0, 1.0);
+    let lookat = Vec3::new(0.0, 0.0, -1.0);
+    let vup = Vec3::new(0.0, 1.0, 0.0);
+    let dist_to_focus = (&lookfrom - &lookat).length();
+    let aperture = 2.0;
+
+    let cam = Camera::new(
+        lookfrom,
+        lookat,
+        vup,
+        20.0,
+        ASPECT_RATIO,
+        aperture,
+        dist_to_focus,
+    );
+
     // Renderer
     print!("P3\n{IMAGE_WIDTH} {IMAGE_HEIGHT}\n255\n");
     let mut j = (IMAGE_HEIGHT - 1) as i32;

@@ -6,6 +6,7 @@ use crate::material::Material;
 use crate::ray::Ray;
 use crate::vector;
 use crate::vector::Vec3;
+
 pub struct Sphere {
     center: Vec3,
     radius: f32,

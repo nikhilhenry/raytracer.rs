@@ -17,7 +17,7 @@ pub struct Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, r_in: &Ray, hit: &HitRecord) -> Scatter {
+    fn scatter(&self, _r_in: &Ray, hit: &HitRecord) -> Scatter {
         let mut scatter_dir = &hit.normal + &random_unit_vector();
         if scatter_dir.near_zero() {
             scatter_dir = hit.normal.clone()

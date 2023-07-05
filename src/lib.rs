@@ -12,26 +12,6 @@ use std::io;
 use std::io::Write;
 use vector::Vec3;
 
-fn ray_color(r: &ray::Ray, world: &dyn hittable::Hittable, depth: u32) -> Vec3 {
-    if depth == 0 {
-        return Vec3::new(0.0, 0.0, 0.0);
-    }
-    if let Some(hit) = world.hit(r, 0.001, INFINITY) {
-        // let target = &hit.p + &hit.normal + random_unit_vector();
-        // let target = &hit.p + &hit.normal + random_in_hemisphere(&hit.normal);
-        // return ray_color(&Ray::new(&hit.p, &(&target - &hit.p)), world, depth - 1) * 0.5;
-        if let Some((attenuation, scattered)) = hit.material.scatter(r, &hit) {
-            return attenuation * ray_color(&scattered, world, depth - 1);
-        } else {
-            return Vec3::zero();
-        }
-    }
-    let unit_direction = vector::unit_vector(r.dir());
-    let t = 0.5 * (unit_direction['y'] + 1.0);
-    return Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + vector::Vec3::new(0.5, 0.7, 1.0) * t;
-}
-
-const INFINITY: f32 = f32::INFINITY;
 const PI: f32 = std::f32::consts::PI;
 
 #[inline]
@@ -51,16 +31,12 @@ pub fn render() {
     let material_ground = rc::Rc::new(material::Lambertian {
         albedo: Vec3::new(0.8, 0.8, 0.0),
     });
-
     let material_center = rc::Rc::new(material::Lambertian {
         albedo: Vec3::new(0.1, 0.2, 0.5),
     });
-    // let material_left = rc::Rc::new(material::Metal {
-    //     albedo: Vec3::new(0.8, 0.8, 0.8),
-    // });
     let material_left = rc::Rc::new(material::Dielectric { ir: 1.5 });
     let material_right = rc::Rc::new(material::Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.3));
-    // let material_right = rc::Rc::new(material::Dielectric { ir: 1.5 });
+
     // World
     let mut world = hittable::HittableList::new();
     world.add(rc::Rc::new(Sphere::new(
@@ -83,6 +59,7 @@ pub fn render() {
         0.5,
         material_right,
     )));
+
     // Camera
     let lookfrom = Vec3::new(-2.0, 2.0, 1.0);
     let lookat = Vec3::new(0.0, 0.0, -1.0);
@@ -114,7 +91,7 @@ pub fn render() {
                 let v = (j as f32 + rng.gen_range(0.0..1.0)) / (IMAGE_HEIGHT - 1) as f32;
 
                 let r = cam.get_ray(u, v);
-                pixel_color += ray_color(&r, &world, MAX_DEPTH);
+                pixel_color += ray::ray_color(&r, &world, MAX_DEPTH);
             }
             vector::write_color(pixel_color, SAMPLES_PER_PIXEL);
         }

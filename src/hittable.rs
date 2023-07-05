@@ -1,7 +1,6 @@
 use crate::material::Material;
 use crate::ray;
 use crate::vector;
-use crate::vector::Vec3;
 use std::rc;
 
 #[derive(Clone)]
@@ -12,16 +11,7 @@ pub struct HitRecord {
     pub t: f32,
     pub front_face: bool,
 }
-impl HitRecord {
-    pub fn set_face_normal(&mut self, r: &ray::Ray, outward_normal: &Vec3) {
-        self.front_face = vector::dot(r.dir(), outward_normal) < 0.0;
-        if self.front_face {
-            self.normal = outward_normal.clone();
-        } else {
-            self.normal = outward_normal.clone() * -1.0;
-        }
-    }
-}
+
 pub trait Hittable {
     fn hit(&self, r: &ray::Ray, t_min: f32, t_max: f32) -> Option<HitRecord>;
 }
@@ -52,5 +42,11 @@ impl HittableList {
     }
     pub fn new() -> Self {
         HittableList { objects: vec![] }
+    }
+}
+
+impl Drop for HittableList {
+    fn drop(&mut self) {
+        self.clear();
     }
 }

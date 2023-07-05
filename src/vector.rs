@@ -15,6 +15,20 @@ macro_rules! print_vec {
     };
 }
 
+#[macro_export]
+macro_rules! color {
+    ($r:literal,$g:literal,$b:literal) => {
+        Vec3::new($r, $g, $b)
+    };
+}
+
+#[macro_export]
+macro_rules! pos {
+    ($r:literal,$g:literal,$b:literal) => {
+        Vec3::new($r, $g, $b)
+    };
+}
+
 fn clamp(x: f32, min: f32, max: f32) -> f32 {
     if x > max {
         return max;

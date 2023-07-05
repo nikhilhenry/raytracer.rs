@@ -21,51 +21,20 @@ pub fn deg_to_rad(degress: f32) -> f32 {
 
 pub fn render() {
     //  Image
-    const ASPECT_RATIO: f32 = 16.0 / 9.0;
-    const IMAGE_WIDTH: u32 = 400;
+    const ASPECT_RATIO: f32 = 3.0 / 2.0;
+    const IMAGE_WIDTH: u32 = 1200;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as u32;
-    const SAMPLES_PER_PIXEL: u32 = 100;
+    const SAMPLES_PER_PIXEL: u32 = 500;
     const MAX_DEPTH: u32 = 50;
 
-    // Spheres and Materials
-    let material_ground = rc::Rc::new(material::Lambertian {
-        albedo: Vec3::new(0.8, 0.8, 0.0),
-    });
-    let material_center = rc::Rc::new(material::Lambertian {
-        albedo: Vec3::new(0.1, 0.2, 0.5),
-    });
-    let material_left = rc::Rc::new(material::Dielectric { ir: 1.5 });
-    let material_right = rc::Rc::new(material::Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.3));
-
-    // World
-    let mut world = hittable::HittableList::new();
-    world.add(rc::Rc::new(Sphere::new(
-        Vec3::new(0.0, -100.5, -1.0),
-        100.0,
-        material_ground,
-    )));
-    world.add(rc::Rc::new(Sphere::new(
-        Vec3::new(0.0, 0.0, -1.0),
-        0.5,
-        material_center,
-    )));
-    world.add(rc::Rc::new(Sphere::new(
-        Vec3::new(-1.0, 0.0, -1.0),
-        -0.4,
-        material_left,
-    )));
-    world.add(rc::Rc::new(Sphere::new(
-        Vec3::new(1.0, 0.0, -1.0),
-        0.5,
-        material_right,
-    )));
+    let world = random_scene();
 
     // Camera
-    let lookfrom = Vec3::new(-2.0, 2.0, 1.0);
-    let lookat = Vec3::new(0.0, 0.0, -1.0);
-    let vup = Vec3::new(0.0, 1.0, 0.0);
-    let dist_to_focus = (&lookfrom - &lookat).length();
-    let aperture = 2.0;
+    let lookfrom = pos!(13.0, 2.0, 3.0);
+    let lookat = pos!(0.0, 0.0, 0.0);
+    let vup = pos!(0.0, 1.0, 0.0);
+    let dist_to_focus = 10.0;
+    let aperture = 0.1;
 
     let cam = Camera::new(
         lookfrom,
@@ -97,4 +66,74 @@ pub fn render() {
         }
         j -= 1;
     }
+}
+
+fn random_scene() -> hittable::HittableList {
+    let mut world = hittable::HittableList::new();
+
+    let ground_material = rc::Rc::new(material::Lambertian {
+        albedo: color!(0.5, 0.5, 0.5),
+    });
+    world.add(rc::Rc::new(Sphere::new(
+        pos!(0.0, -1000.0, 0.0),
+        1000.0,
+        ground_material,
+    )));
+
+    // add random spheres
+    for a in -11..11 {
+        break;
+        for b in -11..11 {
+            let mut rng = rand::thread_rng();
+            let choose_mat: f32 = rng.gen();
+            let center = Vec3::new(
+                a as f32 + 0.9 * rng.gen::<f32>(),
+                0.2,
+                b as f32 + 0.9 * rng.gen::<f32>(),
+            );
+
+            if (&center - &pos!(4.0, 0.2, 0.0)).length() > 0.9 {
+                let sphere_material: rc::Rc<dyn material::Material> = if choose_mat < 0.8 {
+                    // diffuse material
+                    let albedo = Vec3::random() * Vec3::random();
+                    rc::Rc::new(material::Lambertian { albedo })
+                } else if choose_mat < 0.95 {
+                    // metal
+                    let albedo = Vec3::random_bound(0.5, 1.0);
+                    let fuzz: f32 = rng.gen();
+                    rc::Rc::new(material::Metal::new(albedo, fuzz))
+                } else {
+                    rc::Rc::new(material::Dielectric { ir: 1.5 })
+                };
+
+                world.add(rc::Rc::new(Sphere::new(center, 0.2, sphere_material)));
+            }
+        }
+    }
+
+    // add main spheres
+    let material1 = rc::Rc::new(material::Dielectric { ir: 1.5 });
+    world.add(rc::Rc::new(Sphere::new(
+        pos!(0.0, 1.0, 0.0),
+        1.0,
+        material1,
+    )));
+
+    let material2 = rc::Rc::new(material::Lambertian {
+        albedo: color!(0.4, 0.2, 0.1),
+    });
+    world.add(rc::Rc::new(Sphere::new(
+        pos!(-4.0, 1.0, 0.0),
+        1.0,
+        material2,
+    )));
+
+    let material3 = rc::Rc::new(material::Metal::new(color!(0.4, 0.2, 0.1), 0.0));
+    world.add(rc::Rc::new(Sphere::new(
+        pos!(4.0, 1.0, 0.0),
+        1.0,
+        material3,
+    )));
+
+    world
 }

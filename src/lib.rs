@@ -82,7 +82,6 @@ fn random_scene() -> hittable::HittableList {
 
     // add random spheres
     for a in -11..11 {
-        break;
         for b in -11..11 {
             let mut rng = rand::thread_rng();
             let choose_mat: f32 = rng.gen();

@@ -58,9 +58,7 @@ pub fn render() {
     //     albedo: Vec3::new(0.8, 0.8, 0.8),
     // });
     let material_left = rc::Rc::new(material::Dielectric { ir: 1.5 });
-    let material_right = rc::Rc::new(material::Metal {
-        albedo: Vec3::new(0.8, 0.6, 0.2),
-    });
+    let material_right = rc::Rc::new(material::Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.3));
     // let material_right = rc::Rc::new(material::Dielectric { ir: 1.5 });
     // World
     let mut world = hittable::HittableList::new();

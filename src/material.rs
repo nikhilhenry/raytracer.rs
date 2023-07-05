@@ -3,7 +3,7 @@ use rand::Rng;
 use crate::{
     hittable::HitRecord,
     ray::Ray,
-    vector::{dot, random_unit_vector, reflect, refract, unit_vector, Vec3},
+    vector::{dot, random_in_unit_sphere, random_unit_vector, reflect, refract, unit_vector, Vec3},
 };
 
 type Scatter = Option<(Vec3, Ray)>;
@@ -29,13 +29,24 @@ impl Material for Lambertian {
 }
 
 pub struct Metal {
-    pub albedo: Vec3,
+    albedo: Vec3,
+    fuzz: f32,
+}
+
+impl Metal {
+    pub fn new(albedo: Vec3, fuzz: f32) -> Metal {
+        let fuzz = if fuzz < 1.0 { fuzz } else { 1.0 };
+        Metal { albedo, fuzz }
+    }
 }
 
 impl Material for Metal {
     fn scatter(&self, r_in: &Ray, hit: &HitRecord) -> Scatter {
         let reflected = reflect(&unit_vector(r_in.dir()), &hit.normal);
-        let scattered = Ray::new(&hit.p, &reflected);
+        let scattered = Ray::new(
+            &hit.p,
+            &(&reflected + &(&random_in_unit_sphere() * self.fuzz)),
+        );
         let attenuation = self.albedo.clone();
         if dot(scattered.dir(), &hit.normal) > 0.0 {
             return Some((attenuation, scattered));

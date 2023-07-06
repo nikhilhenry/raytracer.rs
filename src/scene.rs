@@ -7,16 +7,16 @@ pub fn basic_scene() -> hittable::HittableList {
     let mut world = hittable::HittableList::new();
 
     let ground_material = Rc::new(material::Lambertian {
-        albedo: color!(0.5, 0.5, 0.5),
+        albedo: color!(0.8, 0.8, 0.0),
     });
     world.add(Rc::new(Sphere::new(
-        pos!(0.0, -1000.0, 0.0),
-        1000.0,
+        pos!(0.0, -100.0, -1.0),
+        100.0,
         ground_material,
     )));
 
-    let metal = Rc::new(material::Metal::new(color!(0.5, 1.0, 1.0), 0.0));
-    world.add(Rc::new(Sphere::new(pos!(0.0, 1.0, 0.0), 1.0, metal)));
+    let metal = Rc::new(material::Metal::new(color!(0.5, 0.8, 0.8), 0.0));
+    world.add(Rc::new(Sphere::new(pos!(0.0, 0.5, -1.0), 0.5, metal)));
 
     world
 }

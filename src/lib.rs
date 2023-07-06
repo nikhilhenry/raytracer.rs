@@ -21,25 +21,25 @@ pub fn deg_to_rad(degress: f32) -> f32 {
 pub fn render() {
     //  Image
     const ASPECT_RATIO: f32 = 3.0 / 2.0;
-    const IMAGE_WIDTH: u32 = 800;
+    const IMAGE_WIDTH: u32 = 1200;
     const IMAGE_HEIGHT: u32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as u32;
-    const SAMPLES_PER_PIXEL: u32 = 10;
+    const SAMPLES_PER_PIXEL: u32 = 50;
     const MAX_DEPTH: u32 = 5;
 
     let world = scene::basic_scene();
 
     // Camera
-    let lookfrom = pos!(13.0, 2.0, 3.0);
-    let lookat = pos!(0.0, 0.0, 0.0);
+    let lookfrom = pos!(0.0, 0.6, 0.3);
+    let lookat = pos!(0.0, 0.5, -1.0);
     let vup = pos!(0.0, 1.0, 0.0);
-    let dist_to_focus = 10.0;
+    let dist_to_focus = (&lookfrom - &lookat).length();
     let aperture = 0.1;
 
     let cam = Camera::new(
         lookfrom,
         lookat,
         vup,
-        20.0,
+        90.0,
         ASPECT_RATIO,
         aperture,
         dist_to_focus,

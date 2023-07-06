@@ -26,7 +26,7 @@ pub fn render() {
     const SAMPLES_PER_PIXEL: u32 = 10;
     const MAX_DEPTH: u32 = 5;
 
-    let world = scene::random_scene();
+    let world = scene::basic_scene();
 
     // Camera
     let lookfrom = pos!(13.0, 2.0, 3.0);

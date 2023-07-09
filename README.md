@@ -5,3 +5,9 @@ A rust implementation of [Ray Tracing in One Weekend](https://raytracing.github.
 Final render of a complex scene with 500 samples per pixel and a maximum of 50 bounces per ray. 
 
 ![render](final.png)
+
+## Usage
+
+```bash
+cargo run --release > render.ppm
+```
